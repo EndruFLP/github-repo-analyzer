@@ -1,0 +1,34 @@
+.card {
+	padding: 1.25rem 1.35rem;
+	background: var(--bg-elevated);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow);
+}
+
+.overview__title {
+	margin: 0 0 0.75rem;
+	font-size: 1.25rem;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+
+.overview__description,
+.overview__stats {
+	margin: 0 0 0.5rem;
+	color: var(--text-muted);
+}
+
+.overview__link {
+	display: inline-block;
+	margin-top: 0.75rem;
+	font-size: 0.9rem;
+	font-weight: 500;
+	color: var(--accent);
+	text-decoration: none;
+}
+
+.overview__link:hover {
+	color: var(--accent-hover);
+	text-decoration: underline;
+}

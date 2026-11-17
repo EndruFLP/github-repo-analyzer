@@ -1,0 +1,15 @@
+:root {
+	color-scheme: dark;
+	--bg: #09090b;
+	--bg-elevated: #141418;
+	--border: rgba(255, 255, 255, 0.08);
+	--text: #fafafa;
+	--text-muted: #a1a1aa;
+	--loading: #21c421;
+	--accent: #3b82f6;
+	--accent-hover: #60a5fa;
+	--danger: #f87171;
+	--radius: 12px;
+	--shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+	--font: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}

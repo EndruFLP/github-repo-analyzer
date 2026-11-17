@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { fetchRepository } from '../api/github';
 import ErrorMessage from './ErrorMessage';
 import type { GitHubRepository } from '../types/github';
+import './SearchBar.css';
 
 type SearchBarProps = {
 	onRepositoryChange: (repository: GitHubRepository | null) => void;
@@ -53,15 +54,18 @@ function SearchBar({ onRepositoryChange, onLoadingChange }: SearchBarProps) {
 	}, [submittedRepo, searchId, onRepositoryChange, onLoadingChange]);
 
 	return (
-		<section aria-label="Search repository">
-			<form onSubmit={handleSubmit}>
+		<section className="search" aria-label="Search repository">
+			<form className="search__form" onSubmit={handleSubmit}>
 				<input
+					className="search__input"
 					type="text"
 					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
-					placeholder="e.g facebook/react"
+					placeholder="e.g. facebook/react"
 				/>
-				<button type="submit">Search</button>
+				<button className="search__button" type="submit">
+					Search
+				</button>
 			</form>
 			{searchError && <ErrorMessage message={searchError} />}
 			{fetchError && <ErrorMessage message={fetchError} />}
