@@ -3,6 +3,8 @@ import { fetchRepository } from '../api/github';
 import ErrorMessage from './ErrorMessage';
 import type { GitHubRepository } from '../types/github';
 import './SearchBar.css';
+import { addSearchHistory } from '../utils/searchHistory';
+import SearchHistory from './SearchHistory';
 
 type SearchBarProps = {
 	onRepositoryChange: (repository: GitHubRepository | null) => void;
@@ -16,12 +18,22 @@ function SearchBar({ onRepositoryChange, onLoadingChange }: SearchBarProps) {
 	const [searchId, setSearchId] = useState(0);
 	const [fetchError, setFetchError] = useState('');
 
+	function runSearch(repo: string) {
+		onRepositoryChange(null);
+		setSearchError('');
+		setFetchError('');
+		onLoadingChange(true);
+		setSearchQuery(repo);
+		setSubmittedRepo(repo);
+		setSearchId((id) => id + 1);
+	}
+
 	function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		onRepositoryChange(null);
 		setSearchError('');
-		setSubmittedRepo('');
 		setFetchError('');
+		setSubmittedRepo('');
 		onLoadingChange(false);
 
 		const parts = searchQuery.trim().split('/').filter(Boolean);
@@ -30,29 +42,35 @@ function SearchBar({ onRepositoryChange, onLoadingChange }: SearchBarProps) {
 			setSearchError('Use owner/repo format (e.g. facebook/react)');
 			return;
 		}
-		onLoadingChange(true);
-		setSubmittedRepo(`${parts[0]}/${parts[1]}`);
-		setSearchId((id) => id + 1);
+		runSearch(`${parts[0]}/${parts[1]}`);
 	}
-
 	useEffect(() => {
 		if (!submittedRepo) return;
 
+		let cancelled = false;
 		const [owner, repo] = submittedRepo.split('/');
+
 		fetchRepository(owner, repo)
 			.then((data) => {
+				if (cancelled) return;
 				onRepositoryChange(data as GitHubRepository);
+				addSearchHistory(submittedRepo);
 				setFetchError('');
 			})
 			.catch(() => {
+				if (cancelled) return;
 				onRepositoryChange(null);
 				setFetchError('Repository not found');
 			})
 			.finally(() => {
+				if (cancelled) return;
 				onLoadingChange(false);
 			});
-	}, [submittedRepo, searchId, onRepositoryChange, onLoadingChange]);
 
+		return () => {
+			cancelled = true;
+		};
+	}, [submittedRepo, searchId, onRepositoryChange, onLoadingChange]);
 	return (
 		<section className="search" aria-label="Search repository">
 			<form className="search__form" onSubmit={handleSubmit}>
@@ -69,6 +87,7 @@ function SearchBar({ onRepositoryChange, onLoadingChange }: SearchBarProps) {
 			</form>
 			{searchError && <ErrorMessage message={searchError} />}
 			{fetchError && <ErrorMessage message={fetchError} />}
+			<SearchHistory key={searchId} onSelect={runSearch} />
 		</section>
 	);
 }
