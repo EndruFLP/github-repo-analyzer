@@ -2,9 +2,9 @@
 
 A small React app to search public GitHub repositories (`owner/repo`), see key metadata, and revisit recent searches. Built as a **learning project** for controlled inputs, effects, composition, custom hooks, and `localStorage`—with a dark, minimal UI.
 
-![Home screen](./docs/screenshots/01-home.jpg)
+![Home screen](./docs/screenshots/01-home.png)
 
-![Search results](./docs/screenshots/02-results.jpg)
+![Search results](./docs/screenshots/02-results.png)
 
 ## Features
 
@@ -24,9 +24,18 @@ A small React app to search public GitHub repositories (`owner/repo`), see key m
 
 ```bash
 npm install
-cp .env.example .env
+copy .env.example .env   # Windows — on macOS/Linux: cp .env.example .env
 npm run dev
 ```
+
+Real UI screenshots (optional, for maintainers):
+
+```bash
+npm run dev
+npm run screenshots
+```
+
+Requires the dev server on `http://localhost:5173` (or set `SCREENSHOT_URL`).
 
 Open the URL shown in the terminal (usually `http://localhost:5173`).
 
