@@ -1,75 +1,73 @@
-# React + TypeScript + Vite
+# GitHub Repository Analyzer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small React app to search public GitHub repositories (`owner/repo`), see key metadata, and revisit recent searches. Built as a **learning project** for controlled inputs, effects, composition, custom hooks, and `localStorage`—with a dark, minimal UI.
 
-Currently, two official plugins are available:
+![Home screen](./docs/screenshots/01-home.jpg)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+![Search results](./docs/screenshots/02-results.jpg)
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Search with `owner/repo` validation
+- Loading, validation errors, and API errors
+- Repository overview (name, description, stars, link)
+- Recent searches (persisted in `localStorage`, click to search again)
+- GitHub API with optional **mock mode** for offline development
 
-## Expanding the ESLint configuration
+## Tech stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- [Vite](https://vitejs.dev/) + [React 19](https://react.dev/) + TypeScript
+- GitHub REST API (`GET /repos/{owner}/{repo}`)
+- CSS variables, component-scoped styles (no UI framework)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting started
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+cp .env.example .env
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Open the URL shown in the terminal (usually `http://localhost:5173`).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Environment
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Variable | Description |
+|----------|-------------|
+| `VITE_USE_MOCK` | `true` → `mockData.ts`; `false` → live GitHub API |
+| `VITE_GITHUB_TOKEN` | Optional; reduces rate-limit issues when using the real API |
+
+## Scripts
+
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Development server |
+| `npm run build` | Type-check + production build |
+| `npm run preview` | Preview production build |
+| `npm run lint` | ESLint |
+
+## Project structure
 
 ```
+src/
+  api/          # fetch + mock switch
+  components/   # UI (SearchBar, Overview, History, …)
+  hooks/        # useRepository (fetch side-effects)
+  styles/       # global tokens
+  types/        # GitHub-related types
+  utils/        # search history (localStorage)
+```
+
+## Concepts practiced
+
+| Area | Implementation |
+|------|----------------|
+| State | `searchQuery` vs `submittedRepo`, `searchId` for re-search |
+| Effects | `useRepository` + cleanup (`cancelled`) |
+| Composition | Container (`App`) vs presentational components |
+| Data | Callback props to lift repo + loading state |
+| Persistence | `addSearchHistory` / `getSearchHistory` |
+
+## License
+
+MIT (learning / portfolio use).

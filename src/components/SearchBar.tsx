@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
-import { fetchRepository } from '../api/github';
+import { useState } from 'react';
 import ErrorMessage from './ErrorMessage';
 import type { GitHubRepository } from '../types/github';
 import './SearchBar.css';
-import { addSearchHistory } from '../utils/searchHistory';
 import SearchHistory from './SearchHistory';
+import { useRepository } from '../hooks/useRepository';
 
 type SearchBarProps = {
 	onRepositoryChange: (repository: GitHubRepository | null) => void;
@@ -44,33 +43,15 @@ function SearchBar({ onRepositoryChange, onLoadingChange }: SearchBarProps) {
 		}
 		runSearch(`${parts[0]}/${parts[1]}`);
 	}
-	useEffect(() => {
-		if (!submittedRepo) return;
 
-		let cancelled = false;
-		const [owner, repo] = submittedRepo.split('/');
+	useRepository({
+		submittedRepo,
+		searchId,
+		onRepositoryChange,
+		onLoadingChange,
+		setFetchError,
+	});
 
-		fetchRepository(owner, repo)
-			.then((data) => {
-				if (cancelled) return;
-				onRepositoryChange(data as GitHubRepository);
-				addSearchHistory(submittedRepo);
-				setFetchError('');
-			})
-			.catch(() => {
-				if (cancelled) return;
-				onRepositoryChange(null);
-				setFetchError('Repository not found');
-			})
-			.finally(() => {
-				if (cancelled) return;
-				onLoadingChange(false);
-			});
-
-		return () => {
-			cancelled = true;
-		};
-	}, [submittedRepo, searchId, onRepositoryChange, onLoadingChange]);
 	return (
 		<section className="search" aria-label="Search repository">
 			<form className="search__form" onSubmit={handleSubmit}>
